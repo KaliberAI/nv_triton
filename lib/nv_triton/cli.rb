@@ -36,6 +36,21 @@ module NvTriton
       end
     end
 
+    desc "inference_live_check", "Checks the liveness of the inference server"
+    def inference_live_check
+      begin
+        client = NvTriton::Client.new
+        if client.server_live?
+          say "LIVE", :green
+        else
+          say "DEAD", :red
+        end
+      rescue NvTriton::Error => e
+        say "Error: #{e.message}", :red
+        exit 1
+      end
+    end
+
     no_commands do
       def get_protos
         say "Reading #{PROTO_DIR}... "
