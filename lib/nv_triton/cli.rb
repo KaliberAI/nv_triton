@@ -66,6 +66,24 @@ module NvTriton
       end
     end
 
+    desc "model_ready_check", "Checks the readyness of the model on the inference server"
+    method_option :name, aliases: "-n"
+    method_option :version, aliases: "-v"
+    def model_ready_checks
+      begin
+        version = options[:version] || "1"
+        client = NvTriton::Client.new
+        if client.model_ready?(name: options[:name], version: version)
+          say "#{options[:name]} - #{version} READY", :green
+        else
+          say "#{options[:name]} - #{version} NOT READY", :red
+        end
+      rescue NvTriton::Error => e
+        say "Error: #{e.message}", :red
+        exit 1
+      end
+    end
+
     no_commands do
       def get_protos
         say "Reading #{PROTO_DIR}... "
