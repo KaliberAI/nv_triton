@@ -98,6 +98,21 @@ module NvTriton
       end
     end
 
+    desc "model_metadata", "Gets the metadata for the model"
+    method_option :name, aliases: "-n"
+    method_option :version, aliases: "-v"
+    def model_metadata
+      begin
+        version = options[:version] || "1"
+        client = NvTriton::Client.new
+        metadata = client.model_metadata(name: options[:name], version: version)
+        print_hash metadata
+      rescue NvTriton::Error => e
+        say "Error: #{e.message}", :red
+        exit 1
+      end
+    end
+
     no_commands do
       def get_protos
         say "Reading #{PROTO_DIR}... "

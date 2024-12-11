@@ -80,5 +80,16 @@ module NvTriton
 
       res.to_h
     end
+
+    def model_metadata(name:, version:)
+      unless @inference_service_stub
+        raise NvTriton::Error, "gRPC inference service is not defined. Run the protobuf generator and try again."
+      end
+
+      req = Inference::ModelMetadataRequest.new(name: name, version: version)
+      res = @inference_service_stub.model_metadata(req)
+
+      res.to_h
+    end
   end
 end
