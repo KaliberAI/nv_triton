@@ -2,6 +2,7 @@
 
 require 'thor'
 require 'nv_triton'
+require 'pp'
 
 module NvTriton
   class CLI < Thor
@@ -84,6 +85,19 @@ module NvTriton
       end
     end
 
+    desc "server_metadata", "Gets the metadata from the server"
+    def server_metadata
+      begin
+        client = NvTriton::Client.new
+        metadata = client.server_metadata
+        puts "Server metadata:"
+        print_hash metadata
+      rescue NvTriton::Error => e
+        say "Error #{e.message}", :red
+        exit 1
+      end
+    end
+
     no_commands do
       def get_protos
         say "Reading #{PROTO_DIR}... "
@@ -93,6 +107,13 @@ module NvTriton
         say "done", :blue
 
         proto_files
+      end
+
+      def print_hash(hash)
+        max_key_length = hash.keys.map(&:length).max
+        hash.each do |key, value|
+          puts "#{key.to_s.ljust(max_key_length)} -> #{value}"
+        end
       end
     end
   end
