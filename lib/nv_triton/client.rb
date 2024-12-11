@@ -47,5 +47,16 @@ module NvTriton
 
       res.live
     end
+
+    def server_ready?
+      unless @inference_service_stub
+        raise NvTriton::Error, "gRPC inference service is not defined. Run the protobuf generator and try again."
+      end
+
+      req = Inference::ServerReadyRequest.new
+      res = @inference_service_stub.server_ready(req)
+
+      res.ready
+    end
   end
 end

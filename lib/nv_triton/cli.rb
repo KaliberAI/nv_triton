@@ -51,6 +51,21 @@ module NvTriton
       end
     end
 
+    desc "inference_ready_check", "Checks the readyness of the inference server"
+    def inference_ready_check
+      begin
+        client = NvTriton::Client.new
+        if client.server_ready?
+          say "READY", :green
+        else
+          say "NOT READY", :red
+        end
+      rescue NvTriton::Error => e
+        say "Error: #{e.message}", :red
+        exit 1
+      end
+    end
+
     no_commands do
       def get_protos
         say "Reading #{PROTO_DIR}... "
