@@ -113,6 +113,21 @@ module NvTriton
       end
     end
 
+    desc "chat", "Chat with model"
+    method_option :model_name, aliases: "-m"
+    def chat(input_text)
+      begin
+        client = NvTriton::Client.new
+        response = client.chat(model_name: options[:model_name], input: input_text)
+
+        say "Response:", :green
+        say response
+      rescue NvTriton::Error => e
+        say "Error: #{e.message}", :red
+        exit 1
+      end
+    end
+
     no_commands do
       def get_protos
         say "Reading #{PROTO_DIR}... "

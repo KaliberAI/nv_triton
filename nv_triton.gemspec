@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "thor", "~> 1.3.2"
   spec.add_dependency "grpc", "~> 1.68.1"
   spec.add_dependency "grpc-tools", "~> 1.68.1"
+  spec.add_dependency "erb", "~> 4.0"
 
   spec.add_development_dependency "rspec", "~> 3.0"
 

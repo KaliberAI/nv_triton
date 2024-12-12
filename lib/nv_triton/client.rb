@@ -91,5 +91,27 @@ module NvTriton
 
       res.to_h
     end
+
+    def chat(model_name:, input:)
+      unless @inference_service_stub
+        raise NvTriton::Error, "gRPC inference service is not defined. Run the protobuf generator and try again."
+      end
+
+      rendered_template = ChatHistoryBuilder.new.build_history(messages: [input])
+      model_params = NvTriton::ModelParams.new
+
+      req = InferenceRequestBuilder.new(model_name: model_name, model_params: model_params)
+        .input(name: "text_input", shape: [1, 1], datatype: "BYTES", contents: [rendered_template])
+        .output(name: "text_output")
+        .build
+
+      # Streaming infer requires an enumerable as input
+      res = @inference_service_stub.model_stream_infer([req])
+      outputs = res.map do |r|
+        r.infer_response.raw_output_contents[0]
+      end
+
+      outputs[0]
+    end
   end
 end
