@@ -5,6 +5,10 @@ module NvTriton
     attr_reader :max_tokens, :bad_words, :stop_words, :top_p, :temperature, :presence_penalty, :beam_width, :stream
 
     def initialize(options = {})
+      if !options.kind_of?(Hash)
+        raise NvTriton::Error, "'options' parameter must be a hash"
+      end
+
       if options[:bad_words] && !options[:bad_words].kind_of?(Array)
         raise NvTriton::Error, "bad_words option must be an array of strings, got: #{options[:bad_words].class.name}"
       end
