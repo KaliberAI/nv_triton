@@ -24,7 +24,7 @@ module NvTriton
       @stop_words = { name: "stop_words", datatype: "BYTES", shape: [1, stop_words.length], contents: stop_words }
       @top_p = { name: "top_p",  datatype: "FP32", shape: [1, 1], contents: [options[:top_p]&.to_f || 1.0] }
       @temperature = { name: "temperature", datatype: "FP32", shape: [1, 1], contents: [options[:temperature]&.to_f || 0.1] }
-      presence_penalty = { name: "presence_penalty", datatype: "FP32", shape: [1, 1], contents: [options[:presence_penalty]&.to_f || 0.0] }
+      @presence_penalty = { name: "presence_penalty", datatype: "FP32", shape: [1, 1], contents: [options[:presence_penalty]&.to_f || 0.0] }
       @beam_width = { name: "beam_width", datatype: "INT32", shape: [1, 1], contents: [options[:beam_width]&.to_i || 1] }
       @stream = { name: "stream", datatype: "BOOL", shape: [1, 1], contents: [options[:stream] || false] }
     end
