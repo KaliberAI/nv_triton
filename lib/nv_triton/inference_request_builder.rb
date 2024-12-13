@@ -49,14 +49,11 @@ module NvTriton
 
 
     def build
-      puts @inputs.inspect
       Inference::ModelInferRequest.new(model_name: @model_name, model_version: "1", inputs: @inputs, outputs: @outputs)
     end
 
     private
 
-    # TODO: Apply the proper conversion of data in the match arms
-    # Notes: Contents here is going to be an array
     def tensor_contents(datatype:, contents:)
       case datatype
       in "BOOL"
