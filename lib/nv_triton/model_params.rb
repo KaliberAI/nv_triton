@@ -17,7 +17,7 @@ module NvTriton
         raise NvTriton::Error, "stop_words option must be an array of strings, got: #{options[:stop_words].class.name}"
       end
 
-      @max_tokens = { name: "max_tokens", datatype: "INT32", shape: [1, 1], contents: [options[:max_tokens] || 50] }
+      @max_tokens = { name: "max_tokens", datatype: "INT32", shape: [1, 1], contents: [options[:max_tokens]&.to_i || 16] }
       bad_words = options[:bad_words] || [""]
       @bad_words = { name: "bad_words", datatype: "BYTES", shape: [1, bad_words.length], contents:  bad_words }
       stop_words = options[:stop_words] || ["</s>"]
@@ -33,6 +33,18 @@ module NvTriton
       instance_variables.map do |var|
         send("#{var.to_s.gsub('@','')}")
       end
+    end
+
+    def ==(other)
+      self.class == other.class &&
+        @max_tokens == other.max_tokens &&
+        @bad_words == other.bad_words &&
+        @stop_words == other.stop_words &&
+        @top_p == other.top_p &&
+        @temperature == other.temperature &&
+        @presence_penalty == other.presence_penalty &&
+        @beam_width == other.beam_width &&
+        @stream == other.stream
     end
   end
 end

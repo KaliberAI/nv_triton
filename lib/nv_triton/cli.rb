@@ -25,7 +25,7 @@ module NvTriton
     desc "health_check", "Checks the health of the server connection"
     def health_check
       begin
-        client = NvTriton::Client.new
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
         if client.healthy?
           say "OK", :green
         else
@@ -40,7 +40,7 @@ module NvTriton
     desc "inference_live_check", "Checks the liveness of the inference server"
     def inference_live_check
       begin
-        client = NvTriton::Client.new
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
         if client.server_live?
           say "LIVE", :green
         else
@@ -55,7 +55,7 @@ module NvTriton
     desc "inference_ready_check", "Checks the readyness of the inference server"
     def inference_ready_check
       begin
-        client = NvTriton::Client.new
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
         if client.server_ready?
           say "READY", :green
         else
@@ -73,7 +73,7 @@ module NvTriton
     def model_ready_checks
       begin
         version = options[:version] || "1"
-        client = NvTriton::Client.new
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
         if client.model_ready?(name: options[:name], version: version)
           say "#{options[:name]} - #{version} READY", :green
         else
@@ -88,7 +88,7 @@ module NvTriton
     desc "server_metadata", "Gets the metadata from the server"
     def server_metadata
       begin
-        client = NvTriton::Client.new
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
         metadata = client.server_metadata
         puts "Server metadata:"
         print_hash metadata
@@ -104,7 +104,7 @@ module NvTriton
     def model_metadata
       begin
         version = options[:version] || "1"
-        client = NvTriton::Client.new
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
         metadata = client.model_metadata(name: options[:name], version: version)
         print_hash metadata
       rescue NvTriton::Error => e
@@ -117,8 +117,10 @@ module NvTriton
     method_option :model_name, aliases: "-m"
     def chat(input_text)
       begin
-        client = NvTriton::Client.new
-        response = client.chat(model_name: options[:model_name], input: input_text)
+        client = NvTriton::Client.new(triton_url: "localhost:8001")
+
+        model_params = NvTriton::ModelParams.new
+        response = client.chat(model_name: options[:model_name], input: input_text, model_params: model_params)
 
         say "Response:", :green
         say response

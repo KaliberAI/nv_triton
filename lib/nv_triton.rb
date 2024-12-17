@@ -8,7 +8,6 @@ require_relative "nv_triton/model_params"
 
 module NvTriton
   class Error < StandardError; end
-  # Your code goes here...
 
   def self.root
     File.dirname __dir__

@@ -16,13 +16,13 @@ end
 
 module NvTriton
   class Client
-    def initialize
+    def initialize(triton_url:)
       if HEALTH_SERVICE_LOADED
-        @health_service_stub = Grpc::Health::V1::Health::Stub.new('localhost:8001', :this_channel_is_insecure)
+        @health_service_stub = Grpc::Health::V1::Health::Stub.new(triton_url, :this_channel_is_insecure)
       end
 
       if INFERENCE_SERVICE_LOADED
-        @inference_service_stub = Inference::GRPCInferenceService::Stub.new('localhost:8001', :this_channel_is_insecure)
+        @inference_service_stub = Inference::GRPCInferenceService::Stub.new(triton_url, :this_channel_is_insecure)
       end
     end
 
@@ -92,13 +92,12 @@ module NvTriton
       res.to_h
     end
 
-    def chat(model_name:, input:)
+    def chat(model_name:, input:, model_params:)
       unless @inference_service_stub
         raise NvTriton::Error, "gRPC inference service is not defined. Run the protobuf generator and try again."
       end
 
       rendered_template = ChatHistoryBuilder.new.build_history(messages: [input])
-      model_params = NvTriton::ModelParams.new
 
       req = InferenceRequestBuilder.new(model_name: model_name, model_params: model_params)
         .input(name: "text_input", shape: [1, 1], datatype: "BYTES", contents: [rendered_template])
