@@ -107,7 +107,10 @@ module NvTriton
       # Streaming infer requires an enumerable as input
       res = @inference_service_stub.model_stream_infer([req])
       outputs = res.map do |r|
-        r.infer_response.raw_output_contents[0]
+        # Encode the raw_output_contents as a "UTF-8" string replacing invalid or undefined bytes.
+        # This is needed because the bytes returned in the response contains a leading non-UTF-8 byte
+        # that can't be serialized in a JSON response.
+        r.infer_response.raw_output_contents[0].encode("UTF-8", invalid: :replace, undef: :replace)
       end
 
       outputs[0]
