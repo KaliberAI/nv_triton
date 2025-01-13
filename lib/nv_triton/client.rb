@@ -15,6 +15,8 @@ rescue LoadError
 end
 
 module NvTriton
+  # Note: The client MUST NOT have a leading `http://` or `https://` on the `trition_url` argument.
+  # Including the protocol prefix causes the connection to fail with `Domain name not found`.
   class Client
     def initialize(triton_url:)
       if HEALTH_SERVICE_LOADED
